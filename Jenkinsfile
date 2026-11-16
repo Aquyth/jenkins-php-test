@@ -30,7 +30,7 @@ pipeline{
                 '''[cite: 2]
             }
         }
-        stage('4. Deploy Application'){
+        stage('4. Deploy Application'){ // Fixed 'stgage' to 'stage'
             steps{
                 sh '''
                     docker compose up -d
