@@ -1,0 +1,34 @@
+services:
+    web:
+        build: .
+        container_name: php-sql-app
+        ports:
+            - "8080:80"
+        environment:
+            DB_HOST: db
+            DB_NAME: php_login
+            DB_USER: appuser
+            DB_PASS: ${DB_PASSWORD:-training-password}
+        depends_on:
+            db:
+              condition: service_healthy
+        restart: unless-stopped
+
+    db:
+        image: mysql:8.4
+        container_name: mysql-php-login
+        environment:
+            MYSQL_DATABASE: php_login
+            MYSQL_USER: appuser
+            MYSQL_PASSWORD: ${DB_PASSWORD:-training-password}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-training-password}
+        volumes:
+            - mysql_data:/var/lib/mysql
+            - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+        healthcheck:
+            test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+volumes:
+    mysql_data:
