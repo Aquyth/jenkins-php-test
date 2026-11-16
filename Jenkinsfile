@@ -10,7 +10,7 @@ pipeline{
             steps{
                 script{
                     echo 'Downloading PHP source code'
-                    checkout scm
+                    checkout scm  
                 }
             }
         }
