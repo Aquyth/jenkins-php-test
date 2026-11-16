@@ -10,34 +10,35 @@ pipeline{
             steps{
                 script{
                     echo 'Downloading PHP source code'
-                    checkout scm  
+                    checkout scm
+            
                 }
             }
         }
         stage('2. PHP Syntax Test') {
             steps {
                 sh '''
-                    docker run --rm \
-                    -v "$WORKSPACE:/app" \
-                    -w /app \
-                    php:8.2-cli \
-                    sh -c 'find . -name "*.php" \
-                    -not -path "./vendor/*" -print0 |
-                    xargs -0 -r -n1 php -l'
+                    docker run --rm -v "$WORKSPACE":/app -w /app php:8.4-cli sh -c 'find . -name "*.php" -not -path "./vendor/*" -print0 | xargs -0 -r -n1 php -l'
                 '''
             }
         }
         stage('3. Docker build'){
             steps{
                 sh '''
-                    docker compose build web
+                    docker build -t my-php-app .
                 '''
             }
         }
-        stage('4. Deploy Application'){
-            steps{
+        stage('4. Deploy Application') {
+            steps {
                 sh '''
-                    docker compose up -d
+                    docker stop my-php-container  true
+                    docker rm my-php-container  true
+
+                    docker run -d \
+                        --name my-php-container \
+                        -p 8082:80 \
+                        my-php-app
                 '''
             }
         }
