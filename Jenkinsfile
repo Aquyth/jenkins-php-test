@@ -9,8 +9,8 @@ pipeline{
         stage('1. Git Checkout'){
             steps{
                 script{
-                    echo 'Downloading PHP source code'[cite: 1]
-                    checkout scm[cite: 1, 2]
+                    echo 'Downloading PHP source code'
+                    checkout scm
                 }
             }
         }
@@ -27,14 +27,14 @@ pipeline{
             steps{
                 sh '''
                     docker compose build web
-                '''[cite: 2]
+                '''
             }
         }
-        stage('4. Deploy Application'){ // Fixed 'stgage' to 'stage'
+        stage('4. Deploy Application'){
             steps{
                 sh '''
                     docker compose up -d
-                '''[cite: 3]
+                '''
             }
         }
     }
